@@ -1,0 +1,140 @@
+
+const suits = ['Spades', 'Diamonds', 'Clubs', 'Hearts'];
+const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// CARD CLASS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class Card{
+    constructor(suit, rank, value){
+        this.suit = suit;
+        this.rank = rank;
+        this.value = value;
+    }
+
+    showCard(){
+        return `Suit:${this.suit} Rank:${this.rank} Value:${this.value}`;
+    }      
+}
+
+
+//function showCard(suit, rank, value){
+//    return `Suit:${suit} Rank:${rank} Value:${value}`;
+//}
+
+
+//TESTING PURPOSES
+//let testCard = new Card('Diamonds', 'Queen', '12');
+//testCard.showCard();
+//console.log(testCard);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// DECK CLASS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class Deck{
+    constructor(){
+        this.cards = [];
+    }
+
+    createDeck(){
+        for(let i = 0; i < suits.length; i++) {
+            for(let j = 0; j < ranks.length; j++) {
+                this.cards.push(new Card(suits[i], ranks[j], values[j]));
+            }
+        }
+    }
+                
+    shuffleDeck(){
+        for(let i = 0; i < 52; i++){
+            let tempCard = this.cards[i];
+            let randomIndex = Math.floor(Math.random() * 52);
+            this.cards[i] = this.cards[randomIndex];
+            this.cards[randomIndex] = tempCard;
+        }
+    }
+}
+
+
+
+// let warDeck = new Deck();
+// warDeck.createDeck();
+// warDeck.shuffleDeck();
+// console.log(warDeck);
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// PLAYER CLASS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class Player{
+    constructor(name){
+        this.playerName = name;
+        this.playerScore = 0;
+        this.playerHand = [];
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// GAME CLASS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class Game{
+    constructor(){
+        this.players = [];
+    }
+
+    dealHands(playerOne, playerTwo){
+        this.players.push(new Player(playerOne));
+        this.players.push(new Player(playerTwo));
+        let newDeck = new Deck();
+        newDeck.createDeck();
+        newDeck.shuffleDeck();
+        this.players[0].playerHand = newDeck.cards.slice(0, 26);
+        this.players[1].playerHand = newDeck.cards.slice(26, 52);
+    }
+
+    playHands(){
+        for(let i = 0; i < 26; i++){
+            if(this.players[0].playerHand[i].value > this.players[1].playerHand[i].value){
+                console.log(`${playerOne} beats ${playerTwo}! Point given to ${playerOne}.` );
+                this.players[0].playerScore++;     //adding a point to someones score
+            }
+    
+            else if(this.players[0].playerHand[i].value < this.players[1].playerHand[i].value){
+                console.log(`${playerTwo} beats ${playerOne}! Point given to ${playerTwo}.`)
+                this.players[1].playerScore++;     //adding a point to someones score
+            }
+    
+            else if(this.players[0].playerHand[i].value === this.players[1].playerHand[i].value){
+                console.log('Players Tied. No points awarded to either player')
+            }
+        }
+    } 
+    
+    declareWinner(){
+        for (let i = 0; i < 26; i ++){
+            if(this.players[0].playerScore > this.players[1].playerScore) {
+                console.log(`${playerOne} wins! Final scores: ${this.players[0].playerScore} - ${this.players[1].playerScore}`);
+            }
+            
+            else if(this.players[0].playerScore < this.players[1].playerScore) {
+                console.log(`${playerTwo} wins! Final scores: ${this.players[0].playerScore} - ${this.players[1].playerScore}` );
+            }
+
+            else {
+                console.log('Tie');
+            }
+        }
+    }
+}
+
+let playerOne = 'Highfive';
+let playerTwo = 'Kortado';
+
+
+let newGame = new Game();
+newGame.dealHands('Highfive', 'Kortado');
+newGame.playHands();
+newGame.declareWinner();
+console.log(newGame.players);
